@@ -9,37 +9,32 @@
  * to ensure they don't run until the DOM is ready.
  */
 $(function() {
-    /* This is our first test suite - a test suite just contains
-    * a related set of tests. This suite is all about the RSS
-    * feeds definitions, the allFeeds variable in our application.
-    */
-    describe('RSS Feeds', function() {
+  describe("RSS Feeds", function() {
 
-        it('are defined', function() {
-            expect(allFeeds).toBeDefined();
-            expect(allFeeds instanceof Array)
-            expect(allFeeds.length).not.toBe(0);
-        });
+// Make sure all feeds are defined, not empty
+it("are defined", function() {
+  expect(allFeeds).toBeDefined();
+  expect(allFeeds instanceof Array).toBeTruthy();
+  expect(allFeeds.length).not.toBe(0);
+});
 
+// Make sure all feeds have URL that starts with "http(s)://"
+it("have URLs", function() {
+  allFeeds.forEach(function(feed) {
+    expect(feed.url).toBeDefined();
+    expect(feed.url.length).not.toBe(0);
+    expect(feed.url).toMatch(/^(http|https):\/\//);
+  });
+});
 
-        /* TODO  */
-        it ("have URLs",function(){
-          allFeeds.forEach(function(feed){
-            expect(feed.url).toBeDefined();
-            expect(feed.url.length).not.toBe(0);
-            expect(feed.url.toMatch(/ˆ(http|https):\/\//);
-          });
-        });
-
-        // Make sure all feeds have names (String), not empty
-        it("have names", function() {
-          allFeeds.forEach(function(feed) {
-            expect(feed.name).toBeDefined();
-            expect(typeof feed.name).toBe("string");
-            expect(feed.name.length).not.toBe(0);
-          });
-        });
-      });
+it("have names", function() {
+  allFeeds.forEach(function(feed) {
+    expect(feed.name).toBeDefined();
+    expect(typeof feed.name).toBe("string");
+    expect(feed.name.length).not.toBe(0);
+  });
+});
+});
 
       // Testing suite of Menu
       describe("The menu", function() {
