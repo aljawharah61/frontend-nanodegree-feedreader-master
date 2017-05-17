@@ -37,79 +37,84 @@ it("have names", function() {
 });
 
       // Testing suite of Menu
-      describe("The menu", function() {
+      describe('The menu', function() {
 
-        // Pre-define elements needed for testing hiding/showing of the menu
-        var body = document.body;
-        var menuIcon = document.querySelector(".menu-icon-link");
+            /* A test that ensures the menu element is
+             * hidden by default. You'll have to analyze the HTML and
+             * the CSS to determine how we're performing the
+             * hiding/showing of the menu element.
+             */
 
-        // Make sure the menu is hidden initially
-        it("body has 'menu-hidden' initially", function() {
-          expect(body.className).toContain("menu-hidden");
-        });
+    		it('menu is hidden by default', function() {
+    			expect($('body').hasClass('menu-hidden')).toBe(true);
+    		});
 
-        // Make sure menu icon toggles hide/show on clicking
-        it("body toggles the class 'menu-hidden' on clicking menu icon", function() {
-          menuIcon.click();
-          expect(body.className).not.toContain("menu-hidden");
+             /* A test that ensures the menu changes
+              * visibility when the menu icon is clicked. This test
+              * should have two expectations: does the menu display when
+              * clicked and does it hide when clicked again.
+              */
 
-          menuIcon.click();
-          expect(body.className).toContain("menu-hidden");
-        });
-      });
+    		it('menu changes visibility', function() {
+                $('.menu-icon-link').click();
+                expect($('body').hasClass('menu-hidden')).toEqual(false);
+                $('.menu-icon-link').click();
+                expect($('body').hasClass('menu-hidden')).toEqual(true);
+              });
+    	});
 
-      // Testing suite of Initial Entries
-      describe("Initial Entries", function() {
+        /* A test suite named "Initial Entries" */
+    	describe('Initial Entries', function() {
 
-        // Avoid duplicated setup
-        // Before loading feed
-        beforeEach(function(done) {
-          loadFeed(0, function() {
-            done();
-          });
-        });
+            /* A test that ensures when the loadFeed
+             * function is called and completes its work, there is at least
+             * a single .entry element within the .feed container.
+             * Remember, loadFeed() is asynchronous so this test wil require
+             * the use of Jasmine's beforeEach and asynchronous done() function.
+             */
 
-        // Load "loadFeed" function is called and completes it, and there
-        // should at least 1 .entry element in the .feed contianer
-        it("has at least 1 entry after loadFeed function is called", function(done) {
-          var numEntries = document.querySelector(".feed").getElementsByClassName("entry").length;
-          expect(numEntries).toBeGreaterThan(0);
-          done();
-        });
+    		beforeEach(function(done) {
+                loadFeed(0, function() {
+                    done();
+                });
+             });
 
-        // Make sure each (.feed .entry-link) element has valid link
-        it("has a entry that has a link starting with 'http(s)://'", function(done) {
-          var entries = document.querySelector(".feed").getElementsByClassName("entry-link");
-          for(var i = 0; i < entries.length; i++){
-            expect(entries[i].href).toMatch(/^(http|https):\/\//);
-          }
-          done();
-        });
-      });
+             it('feed container has atleast 1 entry', function() {
+                var entryNumber = $('.entry').length;
+                expect(entryNumber).toBeGreaterThan(0);
+             });
+    	});
 
-      // Testing suite of New Feed Selection
-      describe("New Feed Selection", function() {
+        /* A test suite named "New Feed Selection" */
+    	describe('New Feed Selection', function() {
 
-        // Avoid duplicated setup
-        // Initial loaded feed setup
-        var initFeedSelection;
-        beforeEach(function(done) {
-          loadFeed(0, function() {
-            initFeedSelection = document.querySelector(".feed").innerHTML;
+            /* A test that ensures when a new feed is loaded
+             * by the loadFeed function that the content actually changes.
+             * Remember, loadFeed() is asynchronous.
+             */
 
-            loadFeed(1, function() {
-              done();
+    		var firstFeedList;
+            var secondFeedList;
+
+    		beforeEach(function(done) {
+                loadFeed(1, function() {
+                    firstFeedList = $('.feed').html();
+                    loadFeed(2, function() {
+                        done();
+                    });
+                });
+             });
+
+    		afterEach(function() {
+                loadFeed(0);
             });
-          });
-        });
 
-        // Make sure when new feed is loaded using loadFeed function,
-        // the content changes
-        it("changes its loaded content", function(done) {
-          var newFeedSelection = document.querySelector(".feed").innerHTML;
-          expect(initFeedSelection).not.toBe(newFeedSelection);
-          done();
-        });
-      });
+    		  it('feed content changes', function() {
+                expect(firstFeedList).toBeDefined();
+                secondFeedList = $('.feed').html();
+                expect(secondFeedList).toBeDefined();
+                expect(firstFeedList).not.toEqual(secondFeedList);
+             });
 
+    	});
     }());
